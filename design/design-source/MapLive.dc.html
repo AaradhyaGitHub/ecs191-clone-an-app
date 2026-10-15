@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Live map, six zoom levels</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+@keyframes mlpulse{0%{transform:scale(0.6);opacity:0.55}100%{transform:scale(2.4);opacity:0}}
+.mlpulse{animation:mlpulse 2.2s ease-out infinite}
+@keyframes mlbreathe{0%,100%{fill-opacity:0.2}50%{fill-opacity:0.42}}
+.mlbreathe{animation:mlbreathe 2.4s ease-in-out infinite}
+.mlbtn:focus-visible{outline:3px solid #FFBF00;outline-offset:2px}
+</style>
+</helmet>
+<div onWheel="{{onWheel}}" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #ECEEE8; color: #0E1726; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif">
+
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 1px; height: 1px; transform-origin: 0 0; transform: {{mapTransform}}; transition: transform 700ms cubic-bezier(.22,1,.36,1)">
+<svg width="1800" height="1800" viewBox="-600 -400 1800 1800" style="position: absolute; left: -600px; top: -400px">
+<rect x="-600" y="-400" width="1800" height="1800" fill="#ECEEE8"></rect>
+<path d="M-600 -400 H62 C60 300 54 600 14 1400 H-600 Z" fill="#E5E8DC"></path>
+<g fill="#E1E4DD">
+<rect x="-12" y="-62" width="58" height="134" rx="5"></rect><rect x="128" y="-62" width="64" height="134" rx="5"></rect><rect x="208" y="-62" width="64" height="134" rx="5"></rect><rect x="288" y="-62" width="84" height="134" rx="5"></rect>
+<rect x="-12" y="-200" width="58" height="122" rx="5"></rect><rect x="128" y="-200" width="64" height="122" rx="5"></rect><rect x="208" y="-200" width="64" height="122" rx="5"></rect><rect x="288" y="-200" width="84" height="122" rx="5"></rect><rect x="388" y="-200" width="90" height="122" rx="5"></rect>
+<rect x="128" y="88" width="64" height="64" rx="5"></rect><rect x="208" y="88" width="64" height="64" rx="5"></rect><rect x="288" y="88" width="84" height="64" rx="5"></rect>
+<rect x="128" y="168" width="64" height="54" rx="5"></rect><rect x="208" y="168" width="64" height="54" rx="5"></rect><rect x="288" y="168" width="84" height="54" rx="5"></rect>
+<rect x="128" y="238" width="64" height="52" rx="5"></rect><rect x="208" y="238" width="64" height="52" rx="5"></rect><rect x="288" y="238" width="84" height="52" rx="5"></rect>
+<rect x="388" y="-62" width="90" height="352" rx="5"></rect>
+<rect x="-250" y="40" width="120" height="90" rx="8"></rect><rect x="-250" y="150" width="120" height="110" rx="8"></rect><rect x="-110" y="40" width="100" height="220" rx="8"></rect>
+<rect x="500" y="180" width="44" height="36" rx="3"></rect><rect x="552" y="180" width="44" height="36" rx="3"></rect><rect x="604" y="180" width="44" height="36" rx="3"></rect><rect x="656" y="180" width="44" height="36" rx="3"></rect>
+<rect x="500" y="224" width="44" height="36" rx="3"></rect><rect x="552" y="224" width="44" height="36" rx="3"></rect><rect x="604" y="224" width="44" height="36" rx="3"></rect><rect x="656" y="224" width="44" height="36" rx="3"></rect>
+<rect x="500" y="268" width="44" height="36" rx="3"></rect><rect x="552" y="268" width="44" height="36" rx="3"></rect><rect x="604" y="268" width="44" height="36" rx="3"></rect><rect x="656" y="268" width="44" height="36" rx="3"></rect>
+<rect x="500" y="312" width="44" height="36" rx="3"></rect><rect x="552" y="312" width="44" height="36" rx="3"></rect><rect x="604" y="312" width="44" height="36" rx="3"></rect>
+<rect x="-140" y="460" width="50" height="34" rx="4"></rect><rect x="-80" y="460" width="50" height="34" rx="4"></rect><rect x="-140" y="504" width="50" height="34" rx="4"></rect><rect x="-80" y="504" width="50" height="34" rx="4"></rect>
+</g>
+<g fill="#DADDD5">
+<rect x="96" y="318" width="40" height="28" rx="3"></rect>
+<rect x="390" y="320" width="50" height="30" rx="3"></rect>
+<rect x="340" y="444" width="30" height="54" rx="3"></rect>
+<rect x="232" y="512" width="44" height="30" rx="3"></rect>
+<rect x="296" y="508" width="20" height="40" rx="3"></rect>
+<rect x="110" y="580" width="58" height="36" rx="3"></rect>
+<rect x="232" y="590" width="50" height="40" rx="3"></rect>
+<rect x="316" y="590" width="44" height="60" rx="3"></rect>
+<rect x="400" y="430" width="48" height="70" rx="3"></rect>
+<rect x="290" y="870" width="60" height="34" rx="4"></rect><rect x="360" y="880" width="50" height="50" rx="4"></rect><rect x="300" y="920" width="44" height="30" rx="4"></rect>
+</g>
+<rect x="228" y="440" width="100" height="60" rx="10" fill="#CFE3C7"></rect>
+<rect x="84" y="460" width="78" height="56" rx="10" fill="#CFE3C7"></rect>
+<path d="M-600 712 C-200 690 0 700 80 690 C 160 680 200 730 280 700 C 360 670 420 690 1200 680 L 1200 780 C 420 790 360 760 280 790 C 200 820 140 770 60 780 C -40 790 -200 790 -600 800 Z" fill="#CFE3C7"></path>
+<path d="M-600 750 C-200 730 0 740 80 730 C 160 720 200 765 280 738 C 360 712 420 730 1200 722" stroke="#B5D3E8" stroke-width="9" fill="none" stroke-linecap="round"></path>
+<path d="M-600 1010 C-300 990 0 1030 300 1000 C 600 970 900 1000 1200 990" stroke="#B5D3E8" stroke-width="10" fill="none" stroke-linecap="round"></path>
+<g stroke="#FFFFFF" fill="none" stroke-linecap="round">
+<path d="M-600 80 H1200 M-600 160 H1200 M-600 230 H1200 M-600 -70 H1200 M120 -400 V300 M200 -400 V300 M280 -400 V300 M490 150 V420 M548 150 V420 M600 150 V420 M650 150 V420" stroke-width="4"></path>
+<path d="M260 436 H376 M300 560 V690 M90 420 H190 M380 560 V690 M260 860 H440" stroke-width="4"></path>
+<path d="M-600 300 H1200" stroke="#D9DCD4" stroke-width="13"></path>
+<path d="M-600 300 H1200" stroke-width="10"></path>
+<path d="M-600 560 C100 560 260 566 1200 552" stroke-width="7"></path>
+<path d="M200 300 C202 420 196 560 215 690" stroke-width="7"></path>
+<path d="M380 -400 V700" stroke-width="7"></path>
+</g>
+<path d="M70 -400 C68 300 62 600 20 1400" stroke="#DCC27A" stroke-width="15" fill="none"></path>
+<path d="M70 -400 C68 300 62 600 20 1400" stroke="#F1DA95" stroke-width="11" fill="none"></path>
+<path d="M1200 520 C1000 600 760 700 520 820 C 360 900 200 1000 40 1400" stroke="#DCC27A" stroke-width="17" fill="none"></path>
+<path d="M1200 520 C1000 600 760 700 520 820 C 360 900 200 1000 40 1400" stroke="#F1DA95" stroke-width="13" fill="none"></path>
+
+<g style="opacity: {{zonesOpacity}}; transition: opacity 500ms ease">
+<path d="M208 306 H250 V352 H208 Z" fill="#6E7682" fill-opacity="0.08" stroke="#8C95A3" stroke-width="1" stroke-dasharray="3 2"></path>
+<path d="M306 366 H372 V410 H306 Z" fill="#6E7682" fill-opacity="0.08" stroke="#8C95A3" stroke-width="1" stroke-dasharray="3 2"></path>
+<path d="M328 306 H374 V342 H328 Z" fill="#2563D9" fill-opacity="0.12" stroke="#2563D9" stroke-width="0.9"></path>
+<path d="M208 406 H250 V432 H208 Z" fill="#2563D9" fill-opacity="0.12" stroke="#2563D9" stroke-width="0.9"></path>
+<path d="M236 364 H294 V398 H236 Z" fill="#E07A1A" fill-opacity="0.16" stroke="#C4650E" stroke-width="0.9"></path>
+<path class="mlbreathe" d="M258 306 H320 V346 L302 358 H258 Z" fill="#2563D9" fill-opacity="0.3" stroke="#2563D9" stroke-width="1.3"></path>
+</g>
+</svg>
+</div>
+
+<sc-for list="{{places}}" as="pl" hint-placeholder-count="3">
+<span aria-hidden="true" style="position: absolute; left: {{pl.x}}px; top: {{pl.y}}px; transform: translate(-50%,-50%); opacity: {{pl.op}}; font-size: 10px; font-weight: 700; letter-spacing: 1.4px; color: #6B7380; white-space: nowrap; transition: left 700ms cubic-bezier(.22,1,.36,1), top 700ms cubic-bezier(.22,1,.36,1), opacity 300ms ease">{{pl.name}}</span>
+</sc-for>
+
+<sc-for list="{{greyDots}}" as="g" hint-placeholder-count="5">
+<span aria-hidden="true" style="position: absolute; left: {{g.x}}px; top: {{g.y}}px; width: 9px; height: 9px; margin: -6px 0 0 -6px; border-radius: 50%; background: #9AA3AF; border: 2px solid #FFFFFF; opacity: {{g.op}}; transform: scale({{g.sc}}); transition: left 700ms cubic-bezier(.22,1,.36,1), top 700ms cubic-bezier(.22,1,.36,1), opacity 260ms ease {{g.delay}}ms, transform 400ms cubic-bezier(.34,1.56,.64,1) {{g.delay}}ms"></span>
+</sc-for>
+
+<div aria-label="Your location" role="img" style="position: absolute; left: {{me.x}}px; top: {{me.y}}px; width: 0; height: 0; transition: left 700ms cubic-bezier(.22,1,.36,1), top 700ms cubic-bezier(.22,1,.36,1); z-index: 3">
+<span class="mlpulse" style="position: absolute; left: -24px; top: -24px; width: 48px; height: 48px; border-radius: 50%; background: rgba(30,123,242,0.35)"></span>
+<span style="position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: #1E7BF2; border: 3px solid #FFFFFF; box-sizing: border-box; box-shadow: 0 2px 6px rgba(0,0,0,0.25)"></span>
+</div>
+
+<sc-for list="{{donuts}}" as="m" hint-placeholder-count="5">
+<button class="mlbtn" onClick="{{m.pick}}" aria-label="{{m.aria}}" tabindex="{{m.tab}}" style="position: absolute; left: {{m.x}}px; top: {{m.y}}px; width: 0; height: 0; padding: 0; border: 0; background: transparent; opacity: {{m.op}}; pointer-events: {{m.pe}}; z-index: 4; cursor: pointer; transition: left 700ms cubic-bezier(.22,1,.36,1), top 700ms cubic-bezier(.22,1,.36,1), opacity 260ms ease {{m.delay}}ms">
+<span style="position: absolute; left: -70px; top: {{m.negHalf}}px; width: 140px; display: flex; flex-direction: column; align-items: center; gap: 4px; transform: scale({{m.sc}}); transform-origin: 70px {{m.half}}px; transition: transform 560ms cubic-bezier(.34,1.56,.64,1) {{m.delay}}ms">
+<span style="position: relative; width: {{m.size}}px; height: {{m.size}}px; display: block; filter: drop-shadow(0 4px 10px rgba(2,40,81,0.28))">
+<svg width="{{m.size}}" height="{{m.size}}" viewBox="{{m.viewBox}}" aria-hidden="true" style="display: block">
+<circle cx="{{m.half}}" cy="{{m.half}}" r="{{m.halo}}" fill="#FFFFFF"></circle>
+<circle cx="{{m.half}}" cy="{{m.half}}" r="{{m.r}}" fill="none" stroke="#2563D9" style="stroke-width: 5px; stroke-dasharray: {{m.cDash}}; transform: rotate(-90deg); transform-origin: center; transition: stroke-dasharray 800ms cubic-bezier(.22,1,.36,1) {{m.ringDelay}}ms"></circle>
+<circle cx="{{m.half}}" cy="{{m.half}}" r="{{m.r}}" fill="none" stroke="#E07A1A" style="stroke-width: 5px; stroke-dasharray: {{m.lDash}}; stroke-dashoffset: {{m.lOff}}; transform: rotate(-90deg); transform-origin: center; transition: stroke-dasharray 800ms cubic-bezier(.22,1,.36,1) {{m.ringDelay}}ms"></circle>
+<circle cx="{{m.half}}" cy="{{m.half}}" r="{{m.inner}}" fill="#022851"></circle>
+</svg>
+<span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: {{m.font}}px; font-weight: 800; letter-spacing: -0.4px">{{m.n}}</span>
+</span>
+<span style="font-size: 13px; font-weight: 700; white-space: nowrap; color: #0E1726; text-shadow: 0 0 3px #FFFFFF, 0 0 3px #FFFFFF, 0 0 6px #FFFFFF">{{m.name}}</span>
+</span>
+</button>
+</sc-for>
+
+<sc-for list="{{lots}}" as="lot" hint-placeholder-count="8">
+<button class="mlbtn" onClick="{{lot.pick}}" aria-label="{{lot.aria}}" tabindex="{{lot.tab}}" style="position: absolute; left: {{lot.x}}px; top: {{lot.y}}px; width: 0; height: 0; padding: 0; border: 0; background: transparent; opacity: {{lot.op}}; pointer-events: {{lot.pe}}; z-index: 4; cursor: pointer; transition: left 700ms cubic-bezier(.22,1,.36,1), top 700ms cubic-bezier(.22,1,.36,1), opacity 260ms ease {{lot.delay}}ms">
+<span style="position: absolute; left: 0; bottom: 6px; transform: translateX(-50%) scale({{lot.sc}}); transform-origin: 50% 100%; transition: transform 520ms cubic-bezier(.34,1.56,.64,1) {{lot.delay}}ms; display: flex; align-items: center; height: 32px; padding: 0 5px; box-sizing: border-box; background: #FFFFFF; border-radius: 10px; box-shadow: 0 3px 10px rgba(2,40,81,0.22); white-space: nowrap">
+<span style="display: flex; gap: 3px">
+<sc-for list="{{lot.tags}}" as="t" hint-placeholder-count="1">
+<span style="width: 22px; height: 22px; border-radius: 6px; background: {{t.bg}}; color: {{t.fg}}; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{t.z}}</span>
+</sc-for>
+</span>
+<span style="display: block; max-width: {{lot.nameW}}px; overflow: hidden; font-size: 13px; font-weight: 700; color: #0E1726; transition: max-width 480ms cubic-bezier(.22,1,.36,1) {{lot.delay}}ms"><span style="display: block; padding: 0 3px 0 6px">{{lot.name}}</span></span>
+<span style="position: absolute; left: 50%; bottom: -5px; width: 10px; height: 10px; margin-left: -5px; background: #FFFFFF; transform: rotate(45deg); border-radius: 2px"></span>
+</span>
+</button>
+</sc-for>
+
+<sc-for list="{{zoneLabels}}" as="zl" hint-placeholder-count="6">
+<span style="position: absolute; left: {{zl.x}}px; top: {{zl.y}}px; transform: translate(-50%,-50%) scale({{zl.sc}}); opacity: {{zl.op}}; z-index: 4; display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 9px 0 4px; box-sizing: border-box; background: #FFFFFF; border: 2px solid {{zl.ring}}; border-radius: 15px; box-shadow: 0 2px 8px rgba(2,40,81,0.16); white-space: nowrap; transition: left 700ms cubic-bezier(.22,1,.36,1), top 700ms cubic-bezier(.22,1,.36,1), opacity 260ms ease {{zl.delay}}ms, transform 520ms cubic-bezier(.34,1.56,.64,1) {{zl.delay}}ms">
+<span style="width: 20px; height: 20px; border-radius: 10px; background: {{zl.bg}}; color: {{zl.fg}}; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{zl.z}}</span>
+<span style="font-size: 13px; font-weight: 700; color: {{zl.text}}">{{zl.name}}</span>
+</span>
+</sc-for>
+
+<a href="Search.dc.html" style="position: absolute; top: 62px; left: 16px; right: 16px; height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 18px; box-sizing: border-box; background: #FFFFFF; border-radius: 26px; box-shadow: 0 4px 16px rgba(2,40,81,0.12), 0 1px 3px rgba(2,40,81,0.08); text-decoration: none; color: #5A6472; font-size: 17px; z-index: 6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#022851" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4.2-4.2"></path></svg>
+<span>Search UC Davis buildings…</span>
+</a>
+
+<div style="position: absolute; top: 124px; left: 16px; z-index: 6; display: flex; align-items: center; height: 32px; padding: 0 12px; box-sizing: border-box; background: rgba(255,255,255,0.95); border-radius: 16px; box-shadow: 0 2px 8px rgba(2,40,81,0.10); font-size: 13px; font-weight: 600; color: #2B3442; white-space: nowrap">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #2563D9"></span>C commuter</span>
+<span style="display: flex; align-items: center; gap: 6px; margin-left: 12px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #E07A1A"></span>L resident</span>
+<span style="display: flex; align-items: center; overflow: hidden; max-width: {{otherW}}px; opacity: {{otherOp}}; transition: max-width 420ms cubic-bezier(.22,1,.36,1), opacity 300ms ease"><span style="display: flex; align-items: center; gap: 6px; padding-left: 12px; color: #4A5565; font-weight: 500"><span style="width: 9px; height: 9px; border-radius: 3px; border: 1.5px dashed #8C95A3; box-sizing: border-box"></span>not for students</span></span>
+</div>
+
+<div style="position: absolute; right: 16px; top: 280px; z-index: 6; width: 48px; display: flex; flex-direction: column; align-items: center; background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 16px rgba(2,40,81,0.14)">
+<button class="mlbtn" onClick="{{zoomIn}}" aria-label="Zoom in" style="width: 48px; height: 44px; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 16px 16px 0 0">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#022851" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+<div aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; padding: 4px 0">
+<sc-for list="{{dots}}" as="d" hint-placeholder-count="6">
+<span style="height: 18px; display: flex; align-items: center"><span style="display: block; width: 6px; height: {{d.h}}px; border-radius: 3px; background: {{d.bg}}; transition: height 360ms cubic-bezier(.34,1.56,.64,1), background 300ms ease"></span></span>
+</sc-for>
+</div>
+<button class="mlbtn" onClick="{{zoomOut}}" aria-label="Zoom out" style="width: 48px; height: 44px; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 0 0 16px 16px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#022851" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+</button>
+</div>
+<span role="status" style="position: absolute; right: 72px; top: {{labelTop}}px; z-index: 6; height: 22px; padding: 0 9px; display: flex; align-items: center; border-radius: 11px; background: #022851; color: #FFFFFF; font-size: 12px; font-weight: 700; white-space: nowrap; transition: top 360ms cubic-bezier(.34,1.56,.64,1)">{{levelName}}</span>
+
+<button class="mlbtn" onClick="{{locate}}" aria-label="Zoom to my location" style="position: absolute; right: 16px; top: 494px; z-index: 6; width: 48px; height: 48px; border: 0; border-radius: 50%; background: #FFFFFF; box-shadow: 0 4px 16px rgba(2,40,81,0.14); display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="#1E7BF2" aria-hidden="true"><path d="M3 11.2 21 3l-8.2 18-2.1-7.7z"></path></svg>
+</button>
+
+<section role="status" aria-hidden="{{cardHidden}}" style="position: absolute; left: 16px; right: 16px; bottom: 106px; z-index: 6; background: #FFFFFF; border-radius: 18px; padding: 14px 16px; box-sizing: border-box; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(2,40,81,0.18); opacity: {{cardOp}}; transform: translateY({{cardY}}px); pointer-events: {{cardPe}}; transition: opacity 320ms ease 250ms, transform 520ms cubic-bezier(.34,1.56,.64,1) 250ms">
+<span style="width: 40px; height: 40px; border-radius: 12px; background: #DCE7FB; color: #1A4FB5; font-size: 18px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex: none">C</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 17px; font-weight: 700">You're in Lot 47</span>
+<span style="font-size: 14px; color: #4A5565">Zone C · open to C permit holders</span>
+</span>
+</section>
+
+<a href="Results.dc.html" style="position: absolute; left: 16px; right: 16px; bottom: 34px; z-index: 6; height: 60px; display: flex; align-items: center; justify-content: center; gap: 10px; background: #022851; color: #FFFFFF; border-radius: 18px; font-size: 17px; font-weight: 600; text-decoration: none; box-shadow: 0 8px 24px rgba(2,40,81,0.28)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="#FFBF00" aria-hidden="true"><path d="M3 11.2 21 3l-8.2 18-2.1-7.7z"></path></svg>
+<span>Find student parking near me</span>
+</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"startLevel":{"editor":"int","default":1,"min":0,"max":5},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const LV = [
+{ name: 'City', s: 0.3, cx: 250, cy: 620 },
+{ name: 'Campus areas', s: 0.5, cx: 220, cy: 560 },
+{ name: 'Clusters', s: 0.85, cx: 290, cy: 470 },
+{ name: 'Lots', s: 1.15, cx: 260, cy: 430 },
+{ name: 'Lots + zones', s: 1.7, cx: 285, cy: 370 },
+{ name: 'Your zone', s: 2.6, cx: 290, cy: 345 }
+];
+const start = Math.max(0, Math.min(5, Number(this.props.startLevel ?? 1) || 0));
+const level = st.level ?? start;
+const cx = st.cx ?? LV[level].cx;
+const cy = st.cy ?? LV[level].cy;
+const s = LV[level].s;
+const tx = 195 - cx * s;
+const ty = 430 - cy * s;
+const P = (x, y) => ({ x: Math.round((x * s + tx) * 10) / 10, y: Math.round((y * s + ty) * 10) / 10 });
+const go = (l, x, y) => { const nl = Math.max(0, Math.min(5, l)); this.setState({ level: nl, cx: x, cy: y }); };
+const step = (d) => {
+const nl = Math.max(0, Math.min(5, level + d));
+if (nl === level) return;
+const t = LV[nl];
+go(nl, cx + (t.cx - cx) * 0.6, cy + (t.cy - cy) * 0.6);
+};
+const vis = (on, i) => ({ op: on ? 1 : 0, sc: on ? 1 : 0.4, pe: on ? 'auto' : 'none', tab: on ? 0 : -1, delay: on ? 140 + i * 50 : 0 });
+
+const donut = (d, lvl, i) => {
+const on = level === lvl;
+const n = d.c + d.l;
+const r = n >= 40 ? 34 : n >= 20 ? 30 : n >= 8 ? 24 : 21;
+const size = 2 * r + 12;
+const circ = 2 * Math.PI * r;
+const gap = d.c > 0 && d.l > 0 ? 3 : 0;
+const cLen = circ * d.c / n;
+const lLen = circ * d.l / n;
+const p = P(d.x, d.y);
+return Object.assign({
+name: d.name, n: n, x: p.x, y: p.y,
+size: size, half: size / 2, negHalf: -size / 2, r: r, halo: r + 6, inner: r - 5,
+viewBox: '0 0 ' + size + ' ' + size,
+font: n >= 20 ? 20 : 16,
+cDash: (on ? Math.max(cLen - gap, 0) : 0).toFixed(1) + ' ' + circ.toFixed(1),
+lDash: (on ? Math.max(lLen - gap, 0) : 0).toFixed(1) + ' ' + circ.toFixed(1),
+lOff: (-cLen).toFixed(1),
+ringDelay: on ? 260 + i * 50 : 0,
+aria: d.name + ', ' + n + ' student lots: ' + d.c + ' zone C, ' + d.l + ' zone L. Zoom in.',
+pick: () => go(lvl + 1, d.x, d.y)
+}, vis(on, i));
+};
+const A0 = [
+{ name: 'Main campus', x: 230, y: 490, c: 29, l: 19 },
+{ name: 'South campus', x: 330, y: 900, c: 7, l: 0 }
+];
+const A1 = [
+{ name: 'Segundo', x: 420, y: 330, c: 2, l: 4 },
+{ name: 'Central campus', x: 270, y: 460, c: 18, l: 8 },
+{ name: 'West Village', x: -80, y: 500, c: 6, l: 3 },
+{ name: 'Tercero', x: 200, y: 640, c: 3, l: 4 },
+{ name: 'South campus', x: 330, y: 900, c: 7, l: 0 }
+];
+const A2 = [
+{ name: 'Segundo', x: 420, y: 330, c: 2, l: 4 },
+{ name: 'North', x: 270, y: 340, c: 7, l: 3 },
+{ name: 'Quad', x: 320, y: 470, c: 7, l: 2 },
+{ name: 'Arboretum', x: 190, y: 560, c: 4, l: 3 },
+{ name: 'Tercero', x: 200, y: 660, c: 3, l: 4 },
+{ name: 'West Village', x: -80, y: 500, c: 6, l: 3 },
+{ name: 'South campus', x: 330, y: 900, c: 7, l: 0 }
+];
+const donuts = [].concat(
+A0.map((d, i) => donut(d, 0, i)),
+A1.map((d, i) => donut(d, 1, i)),
+A2.map((d, i) => donut(d, 2, i))
+);
+
+const TAG = { C: { bg: '#DCE7FB', fg: '#1A4FB5' }, L: { bg: '#FCE6CF', fg: '#8A4300' } };
+const LOTS = [
+{ name: 'Lot 47', x: 290, y: 326, z: ['C'] },
+{ name: 'Lot 49', x: 351, y: 323, z: ['C'] },
+{ name: 'Lot 20', x: 264, y: 381, z: ['L'] },
+{ name: 'Gateway', x: 160, y: 330, z: ['C', 'L'] },
+{ name: 'Lot 30', x: 228, y: 419, z: ['C'] },
+{ name: 'Quad Structure', x: 345, y: 470, z: ['C'] },
+{ name: 'Lot 25', x: 330, y: 520, z: ['C', 'L'] },
+{ name: 'Lot 41', x: 190, y: 560, z: ['C'] },
+{ name: 'Tercero lot', x: 200, y: 640, z: ['L'] },
+{ name: 'Segundo lot', x: 420, y: 330, z: ['L'] },
+{ name: 'West Village', x: -80, y: 500, z: ['L'] },
+{ name: 'South lot', x: 330, y: 900, z: ['C'] }
+];
+const lotsOn = level === 3 || level === 4;
+const lots = LOTS.map((d, i) => {
+const p = P(d.x, d.y);
+return Object.assign({
+name: d.name, x: p.x, y: p.y,
+tags: d.z.map((z) => ({ z: z, bg: TAG[z].bg, fg: TAG[z].fg })),
+nameW: level === 4 ? 120 : 0,
+aria: d.name + ', zone ' + d.z.join(' and ') + '. Zoom in.',
+pick: () => go(level + 1, d.x, d.y)
+}, vis(lotsOn, i));
+});
+
+const GREY = [[228, 329], [338, 388], [150, 520], [290, 560], [380, 620], [110, 400]];
+const greyDots = GREY.map((g, i) => { const p = P(g[0], g[1]); return Object.assign({ x: p.x, y: p.y }, vis(lotsOn, i)); });
+
+const ZL = [
+{ name: 'Lot 47', x: 288, y: 322, z: 'C', current: true },
+{ name: 'Lot 49', x: 351, y: 324, z: 'C' },
+{ name: 'Lot 20', x: 265, y: 381, z: 'L' },
+{ name: 'Lot 30', x: 229, y: 419, z: 'C' },
+{ name: 'Staff', x: 229, y: 329, z: 'A', grey: true },
+{ name: 'Visitor', x: 339, y: 388, z: 'F', grey: true }
+];
+const zoneLabels = ZL.map((d, i) => {
+const p = P(d.x, d.y);
+const v = vis(level === 5, i);
+const tag = d.grey ? { bg: '#E6E8EC', fg: '#4A5565' } : TAG[d.z];
+return Object.assign({
+name: d.name, z: d.z, x: p.x, y: p.y, bg: tag.bg, fg: tag.fg,
+text: d.grey ? '#4A5565' : '#0E1726',
+ring: d.current ? '#2563D9' : '#FFFFFF'
+}, v);
+});
+
+const PLACES = [
+{ name: 'NORTH DAVIS', x: 220, y: 20 },
+{ name: 'DOWNTOWN', x: 600, y: 360 },
+{ name: 'STONEGATE', x: -190, y: 10 }
+];
+const places = PLACES.map((d) => { const p = P(d.x, d.y); return { name: d.name, x: p.x, y: p.y, op: level <= 1 ? 1 : 0 }; });
+
+const me = P(290, 334);
+const dots = LV.map((l, i) => ({ h: i === level ? 16 : 6, bg: i === level ? '#FFBF00' : '#C5CBD4' })).reverse();
+const card = level === 5;
+return {
+mapTransform: 'translate(' + tx.toFixed(1) + 'px, ' + ty.toFixed(1) + 'px) scale(' + s + ')',
+zonesOpacity: level === 5 ? 1 : level === 4 ? 0.55 : 0,
+donuts: donuts, lots: lots, greyDots: greyDots, zoneLabels: zoneLabels, places: places, me: me, dots: dots,
+otherW: level >= 3 ? 150 : 0, otherOp: level >= 3 ? 1 : 0,
+levelName: LV[level].name,
+labelTop: 280 + 44 + 4 + (5 - level) * 18 - 2,
+cardOp: card ? 1 : 0, cardY: card ? 0 : 24, cardPe: card ? 'auto' : 'none', cardHidden: card ? 'false' : 'true',
+zoomIn: () => step(1),
+zoomOut: () => step(-1),
+locate: () => go(5, 290, 345),
+onWheel: (e) => {
+const now = Date.now();
+if (now - (this._wheelAt || 0) < 550) return;
+this._wheelAt = now;
+step(e.deltaY < 0 ? 1 : -1);
+}
+};
+}
+}
+</script>
+</body>
+</html>

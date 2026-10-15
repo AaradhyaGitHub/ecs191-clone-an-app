@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Search campus buildings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #FFFFFF; color: #0E1726; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; box-sizing: border-box; padding-top: 58px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 12px; padding: 0 16px">
+<div style="flex: 1; height: 46px; box-sizing: border-box; border: 2px solid #022851; border-radius: 12px; background: #F1F3F6; display: flex; align-items: center; gap: 8px; padding: 0 6px 0 12px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#022851" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4.2-4.2"></path></svg>
+<label for="campus-search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Search UC Davis buildings</label>
+<input id="campus-search" type="search" value="{{query}}" onChange="{{onQuery}}" placeholder="Search UC Davis buildings…" autocomplete="off" style="flex: 1; min-width: 0; height: 40px; border: 0; outline: none; background: transparent; font: 17px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #0E1726; caret-color: #022851">
+<sc-if value="{{hasQuery}}" hint-placeholder-val="{{ false }}">
+<button onClick="{{clear}}" aria-label="Clear search" style="width: 36px; height: 36px; border: 0; background: transparent; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#8A94A3"></circle><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path></svg>
+</button>
+</sc-if>
+</div>
+<a href="Main.dc.html" style="min-height: 44px; display: flex; align-items: center; font-size: 17px; font-weight: 600; color: #022851; text-decoration: none">Cancel</a>
+</div>
+
+<sc-if value="{{showPopularHeader}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding: 14px 20px 4px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #4A5565">Popular on campus</h2>
+<span style="font-size: 13px; color: #4A5565">Nearest first</span>
+</div>
+</sc-if>
+
+<sc-if value="{{showList}}" hint-placeholder-val="{{ true }}">
+<ul style="list-style: none; margin: 0; padding: 0 16px; display: flex; flex-direction: column">
+<sc-for list="{{results}}" as="lm" hint-placeholder-count="6">
+<li style="border-bottom: 1px solid #E8EBEF">
+<sc-if value="{{lm.linked}}" hint-placeholder-val="{{ false }}">
+<a href="LandmarkResults.dc.html" style="min-height: 64px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: #0E1726; padding: 8px 4px; box-sizing: border-box">
+<span style="width: 40px; height: 40px; border-radius: 10px; background: #E7ECF4; display: flex; align-items: center; justify-content: center; flex: none">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#022851" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"></rect><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M11 21v-3h2v3"></path></svg>
+</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 17px; font-weight: 600">{{lm.name}}</span>
+<sc-if value="{{lm.hasSub}}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; color: #4A5565">{{lm.sub}}</span></sc-if>
+</span>
+<span style="font-size: 15px; color: #4A5565; flex: none">{{lm.dist}}</span>
+</a>
+</sc-if>
+<sc-if value="{{lm.unlinked}}" hint-placeholder-val="{{ true }}">
+<button style="width: 100%; min-height: 64px; border: 0; background: transparent; display: flex; align-items: center; gap: 14px; text-align: left; font: inherit; color: #0E1726; padding: 8px 4px; box-sizing: border-box; cursor: pointer">
+<span style="width: 40px; height: 40px; border-radius: 10px; background: #E7ECF4; display: flex; align-items: center; justify-content: center; flex: none">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#022851" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"></rect><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M11 21v-3h2v3"></path></svg>
+</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 17px; font-weight: 600">{{lm.name}}</span>
+<sc-if value="{{lm.hasSub}}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; color: #4A5565">{{lm.sub}}</span></sc-if>
+</span>
+<span style="font-size: 15px; color: #4A5565; flex: none">{{lm.dist}}</span>
+</button>
+</sc-if>
+</li>
+</sc-for>
+</ul>
+</sc-if>
+
+<sc-if value="{{noResults}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 64px 40px 0">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #EEF0F3; display: flex; align-items: center; justify-content: center">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4A5565" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4.2-4.2M8.5 11h5"></path></svg>
+</span>
+<h2 style="margin: 4px 0 0; font-size: 20px; font-weight: 700">No campus building found</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #4A5565; text-wrap: pretty">Try a building name like “Olson” or a nickname like “MU”. Only UC Davis campus places are listed.</p>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"initialQuery":{"editor":"text","default":""},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const q = st.query !== undefined ? st.query : (this.props.initialQuery ?? '');
+const t = q.trim().toLowerCase();
+const all = [
+{ name: 'Memorial Union', aliases: ['MU'], sub: 'Also called “MU”', mi: 1.1, popular: true },
+{ name: 'Shields Library', aliases: ['Peter J. Shields Library', 'Shields'], sub: 'Peter J. Shields Library', mi: 1.2, popular: true },
+{ name: 'Wellman Hall', aliases: [], sub: '', mi: 1.2, popular: false },
+{ name: 'Olson Hall', aliases: [], sub: '', mi: 1.3, popular: true },
+{ name: 'Giedt Hall', aliases: [], sub: '', mi: 1.3, popular: false },
+{ name: 'The Silo', aliases: ['Silo Union', 'Silo'], sub: 'Silo Union', mi: 1.4, popular: true },
+{ name: 'Cruess Hall', aliases: [], sub: '', mi: 1.5, popular: false },
+{ name: 'ARC', aliases: ['Activities and Recreation Center', 'Rec center', 'Gym'], sub: 'Activities and Recreation Center', mi: 1.6, popular: true },
+{ name: 'Kemper Hall', aliases: [], sub: '', mi: 1.7, popular: false },
+{ name: 'Mondavi Center', aliases: ['Mondavi'], sub: 'Mondavi Center for the Performing Arts', mi: 1.9, popular: true }
+];
+let list;
+if (!t) {
+list = all.filter((l) => l.popular).map((l) => Object.assign({}, l));
+} else {
+list = [];
+all.forEach((l) => {
+const inName = l.name.toLowerCase().includes(t);
+const alias = l.aliases.find((a) => a.toLowerCase().includes(t));
+if (inName) list.push(Object.assign({}, l));
+else if (alias) list.push(Object.assign({}, l, { sub: 'Matches “' + alias + '”' }));
+});
+}
+const results = list.map((l) => ({
+name: l.name, sub: l.sub, hasSub: !!l.sub,
+dist: l.mi.toFixed(1) + ' mi',
+linked: l.name === 'Olson Hall', unlinked: l.name !== 'Olson Hall'
+}));
+return {
+query: q,
+hasQuery: q.length > 0,
+onQuery: (e) => this.setState({ query: e.target.value }),
+clear: () => this.setState({ query: '' }),
+results: results,
+showPopularHeader: !t,
+showList: results.length > 0,
+noResults: !!t && results.length === 0
+};
+}
+}
+</script>
+</body>
+</html>
